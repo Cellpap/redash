@@ -74,7 +74,7 @@ help() {
 }
 
 tests() {
-  export REDASH_DATABASE_URL="postgresql://postgres@postgres/tests"
+  export REDASH_DATABASE_URL="postgresql://postgres@postgres-redash/tests"
 
   if [ $# -eq 0 ]; then
     TEST_ARGS=tests/

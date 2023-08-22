@@ -8,10 +8,10 @@ up:
 
 test_db:
 	@for i in `seq 1 5`; do \
-		if (docker-compose exec postgres sh -c 'psql -U postgres -c "select 1;"' 2>&1 > /dev/null) then break; \
+		if (docker-compose exec postgres-redash sh -c 'psql -U postgres -c "select 1;"' 2>&1 > /dev/null) then break; \
 		else echo "postgres initializing..."; sleep 5; fi \
 	done
-	docker-compose exec postgres sh -c 'psql -U postgres -c "drop database if exists tests;" && psql -U postgres -c "create database tests;"'
+	docker-compose exec postgres-redash sh -c 'psql -U postgres -c "drop database if exists tests;" && psql -U postgres -c "create database tests;"'
 
 create_database: .env
 	docker-compose run server create_db

@@ -5,7 +5,7 @@ x-redash-service: &redash-service
   build:
     context: .
     args:
-      skip_frontend_build: "true"  # set to empty string to build
+      skip_frontend_build: ""  # set to empty string to build
   volumes:
     - .:/app
   env_file:
@@ -13,7 +13,7 @@ x-redash-service: &redash-service
 x-redash-environment: &redash-environment
   REDASH_LOG_LEVEL: "INFO"
   REDASH_REDIS_URL: "redis://redis:6379/0"
-  REDASH_DATABASE_URL: "postgresql://postgres@postgres/postgres"
+  REDASH_DATABASE_URL: "postgresql://postgres@postgres-redash/postgres"
   REDASH_RATELIMIT_ENABLED: "false"
   REDASH_MAIL_DEFAULT_SENDER: "redash@example.com"
   REDASH_MAIL_SERVER: "email"
@@ -26,7 +26,7 @@ services:
     <<: *redash-service
     command: dev_server
     depends_on:
-      - postgres
+      - postgres-redash
       - redis
     ports:
       - "5001:5000"
@@ -52,7 +52,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-  postgres:
+  postgres-redash:
     image: pgautoupgrade/pgautoupgrade:15-alpine3.8
     ports:
       - "15432:5432"
@@ -63,9 +63,13 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - postgres:/var/lib/postgresql/data
   email:
     image: maildev/maildev
     ports:
       - "1080:1080"
       - "1025:1025"
     restart: unless-stopped
+volumes:
+  postgres:
